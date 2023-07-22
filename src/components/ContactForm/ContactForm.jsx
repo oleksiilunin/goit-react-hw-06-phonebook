@@ -36,6 +36,7 @@ const initialValues = {
   name: '',
   number: '',
 };
+
 const ContactForm = ({ onAddContact }) => {
   const handleSubmit = (values, { resetForm }) => {
     onAddContact({ id: nanoid(), ...values });

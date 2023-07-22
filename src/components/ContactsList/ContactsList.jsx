@@ -19,15 +19,10 @@ import PropTypes from 'prop-types';
 />;
 
 const ContactsList = ({ filteredContacts, onDeleteContact }) => {
-  const sortedList = filteredContacts.sort((firstContact, secondContact) =>
-    firstContact.name
-      .toLowerCase()
-      .localeCompare(secondContact.name.toLowerCase())
-  );
   return (
     !!filteredContacts.length && (
       <List>
-        {sortedList.map(({ id, name, number }) => (
+        {filteredContacts.map(({ id, name, number }) => (
           <Item key={id}>
             <ItemWrapper>
               <NameSpan>{name}:</NameSpan> <NumberSpan>{number}</NumberSpan>
