@@ -1,4 +1,3 @@
-import { BeatLoader } from 'react-spinners';
 import { FiUserMinus } from 'react-icons/fi';
 import {
   List,
@@ -8,17 +7,28 @@ import {
   NameSpan,
   NumberSpan,
 } from './ContactsList.styled';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from 'redux/contactsSlice';
 
-<BeatLoader
-  color="#36d7b7"
-  cssOverride={{}}
-  margin={2}
-  size={16}
-  speedMultiplier={1}
-/>;
+const ContactsList = () => {
+  const contacts = useSelector(state => state.contacts);
+  const filterValue = useSelector(state => state.filter);
+  const dispatch = useDispatch();
 
-const ContactsList = ({ filteredContacts, onDeleteContact }) => {
+  const onDeleteContact = id => {
+    dispatch(deleteContact(id));
+  };
+
+  const getFilteredContacts = () => {
+    return contacts
+      ? contacts.filter(contact =>
+          contact.name.toLowerCase().includes(filterValue.toLocaleLowerCase())
+        )
+      : [];
+  };
+
+  const filteredContacts = getFilteredContacts();
+
   return (
     !!filteredContacts.length && (
       <List>
@@ -39,17 +49,6 @@ const ContactsList = ({ filteredContacts, onDeleteContact }) => {
       </List>
     )
   );
-};
-
-ContactsList.propTypes = {
-  filteredContacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ),
-  onDeleteContact: PropTypes.func.isRequired,
 };
 
 export { ContactsList };
