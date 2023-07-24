@@ -8,9 +8,11 @@ import {
   ErrorMessage,
 } from './ContactForm.styled';
 import { FiPhone, FiUserPlus, FiUser } from 'react-icons/fi';
-import { nanoid } from 'nanoid';
 import * as yup from 'yup';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { notifyOptions } from 'helpers/toastNotifyOptions';
+import { addContact } from 'redux/contactsSlice';
 
 const schema = yup.object().shape({
   name: yup
@@ -37,10 +39,26 @@ const initialValues = {
   number: '',
 };
 
-const ContactForm = ({ onAddContact }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
+
   const handleSubmit = (values, { resetForm }) => {
-    onAddContact({ id: nanoid(), ...values });
-    resetForm();
+    const isContactExists = contacts?.some(
+      contact =>
+        contact.name.trim() === values.name.trim() ||
+        contact.number.trim() === values.number.trim()
+    );
+
+    if (isContactExists) {
+      toast.error(
+        `The contact with name: ${values.name} or phone number: ${values.number} already exists in your list.`,
+        notifyOptions
+      );
+    } else {
+      dispatch(addContact(values));
+      resetForm();
+    }
   };
 
   return (
@@ -87,10 +105,6 @@ const ContactForm = ({ onAddContact }) => {
       </Form>
     </Formik>
   );
-};
-
-ContactForm.propTypes = {
-  onAddContact: PropTypes.func.isRequired,
 };
 
 export { ContactForm };
